@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.AddressShareMapper">
+
+    <!-- 查询我分享的联系人 -->
+    <select id="selectBySharedBy" resultType="com.oa.system.entity.AddressShare">
+        SELECT
+            s.id,
+            s.contact_id,
+            s.shared_by,
+            s.shared_with,
+            s.del_flag,
+            s.create_time,
+            s.update_time,
+            a.contact_name AS `name`,
+            a.phone,
+            a.email,
+            a.company
+        FROM oa_address_share s
+        LEFT JOIN oa_address_book a ON s.contact_id = a.id
+        WHERE s.shared_by = #{sharedBy} AND s.del_flag = 0
+        ORDER BY s.create_time DESC
+    </select>
+
+    <!-- 查询分享给我的联系人 -->
+    <select id="selectBySharedWith" resultType="com.oa.system.entity.AddressShare">
+        SELECT
+            s.id,
+            s.contact_id,
+            s.shared_by,
+            s.shared_with,
+            s.del_flag,
+            s.create_time,
+            s.update_time,
+            a.contact_name AS `name`,
+            a.phone,
+            a.email,
+            a.company
+        FROM oa_address_share s
+        LEFT JOIN oa_address_book a ON s.contact_id = a.id
+        WHERE s.shared_with = #{sharedWith} AND s.del_flag = 0
+        ORDER BY s.create_time DESC
+    </select>
+
+</mapper>

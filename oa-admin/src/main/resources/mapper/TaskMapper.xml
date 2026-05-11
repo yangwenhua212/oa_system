@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.TaskMapper">
+
+    <select id="selectTaskList" resultType="com.oa.system.entity.Task">
+        SELECT * FROM oa_task WHERE del_flag = 0
+        <if test="userId != null">
+            AND assignee_id = #{userId}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectMyTaskList" resultType="com.oa.system.entity.Task">
+        SELECT * FROM oa_task WHERE del_flag = 0 AND handler_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectCompletionRank" resultType="java.util.Map">
+        SELECT t.handler_name AS name, COUNT(*) AS completedCount
+        FROM oa_task t
+        WHERE t.status = 'completed' AND t.handler_name IS NOT NULL
+        GROUP BY t.handler_name, t.handler_id
+        ORDER BY completedCount DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectMaxTaskNo" resultType="java.lang.String">
+        SELECT MAX(task_no) FROM oa_task WHERE del_flag = 0
+    </select>
+
+</mapper>

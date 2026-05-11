@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.NoteMapper">
+
+    <select id="selectNoteList" resultType="com.oa.system.entity.Note">
+        SELECT * FROM oa_note WHERE del_flag = 0
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="catalogId != null">
+            AND catalog_id = #{catalogId}
+        </if>
+        ORDER BY is_top DESC, update_time DESC
+    </select>
+
+</mapper>

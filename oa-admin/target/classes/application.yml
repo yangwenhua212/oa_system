@@ -1,0 +1,83 @@
+# ==========================================
+# OA System Application Configuration
+# ==========================================
+
+# Server Configuration
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+# Spring Application Name
+spring:
+  application:
+    name: oa-admin
+
+  # Database Configuration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/oa_system?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: Yang123!
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+
+  # Jackson Configuration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+    property-naming-strategy: LOWER_CAMEL_CASE
+
+  # File Upload Configuration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 200MB
+
+# MyBatis Plus Configuration
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.oa.system.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT Configuration
+jwt:
+  secret: oa-system-jwt-secret-key-2026-change-this-in-production
+  expiration: 86400000  # 24 hours in milliseconds
+  header: Authorization
+  prefix: Bearer
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.oa: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/oa-admin.log
+
+# Application Custom Configuration
+oa:
+  file:
+    upload-path: ./uploads
+    avatar-path: ./uploads/avatars
+    attachment-path: ./uploads/attachments

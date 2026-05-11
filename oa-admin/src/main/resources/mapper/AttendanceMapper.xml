@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.AttendanceMapper">
+
+    <!-- 根据用户和日期查询考勤 -->
+    <select id="selectAttendanceByUserAndDate" resultType="com.oa.system.entity.Attendance">
+        SELECT * FROM oa_attendance
+        WHERE user_id = #{userId}
+        AND attendance_date = #{date}
+        LIMIT 1
+    </select>
+
+    <!-- 查询考勤统计 -->
+    <select id="selectAttendanceStatistics" resultType="com.oa.system.entity.Attendance">
+        SELECT * FROM oa_attendance
+        WHERE user_id = #{userId}
+        <if test="startDate != null">
+            AND attendance_date >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND attendance_date &lt;= #{endDate}
+        </if>
+        ORDER BY attendance_date DESC
+    </select>
+
+</mapper>

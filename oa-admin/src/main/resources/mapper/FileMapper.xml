@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.FileMapper">
+
+    <select id="selectFileList" resultType="com.oa.system.entity.File">
+        SELECT * FROM sys_file WHERE del_flag = 0
+        <if test="fileType != null and fileType != ''">
+            AND file_type = #{fileType}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

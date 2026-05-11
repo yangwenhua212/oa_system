@@ -1,0 +1,70 @@
+// OA System Global Styles
+// Based on old OA System theme
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2c3b41;
+}
+
+// Page Transition
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// Element Plus Override
+.el-menu {
+  border-right: none !important;
+}
+
+.el-table {
+  font-size: 13px;
+}
+
+.el-card {
+  border-radius: 4px;
+  border-top: 3px solid #00a65a;
+}
+
+.el-button--primary {
+  background-color: #00a65a !important;
+  border-color: #00a65a !important;
+
+  &:hover {
+    background-color: #008d4c !important;
+    border-color: #008d4c !important;
+  }
+}
+
+.el-menu--horizontal > .el-menu-item.is-active {
+  border-bottom-color: #00a65a;
+}

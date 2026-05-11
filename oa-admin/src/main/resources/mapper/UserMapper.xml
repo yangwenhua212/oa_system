@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.UserMapper">
+
+    <!-- 查询用户列表（包含部门、职位信息） -->
+    <select id="selectUserList" resultType="com.oa.system.entity.User">
+        SELECT u.*, d.dept_name, p.position_name
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.id
+        LEFT JOIN sys_position p ON u.position_id = p.id
+        WHERE u.del_flag = 0
+        <if test="username != null and username != ''">
+            AND u.username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="realName != null and realName != ''">
+            AND u.real_name LIKE CONCAT('%', #{realName}, '%')
+        </if>
+        <if test="deptId != null">
+            AND u.dept_id = #{deptId}
+        </if>
+        <if test="status != null">
+            AND u.status = #{status}
+        </if>
+        ORDER BY u.create_time DESC
+    </select>
+
+    <!-- 根据用户ID查询菜单权限 -->
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT m.perms
+        FROM sys_user_role ur
+        LEFT JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+        LEFT JOIN sys_menu m ON rm.menu_id = m.id
+        WHERE ur.user_id = #{userId}
+        AND m.perms IS NOT NULL
+        AND m.perms != ''
+    </select>
+
+    <!-- 根据用户ID查询菜单ID列表 -->
+    <select id="selectMenuIdsByUserId" resultType="java.lang.Long">
+        SELECT DISTINCT m.id
+        FROM sys_user_role ur
+        LEFT JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+        LEFT JOIN sys_menu m ON rm.menu_id = m.id
+        WHERE ur.user_id = #{userId}
+        AND m.id IS NOT NULL
+    </select>
+
+    <!-- 根据关键词搜索用户 -->
+    <select id="searchUserByKeyword" resultType="com.oa.system.entity.User">
+        SELECT u.*, d.dept_name, p.position_name
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.id
+        LEFT JOIN sys_position p ON u.position_id = p.id
+        WHERE u.del_flag = 0
+          AND (u.username LIKE CONCAT('%', #{keyword}, '%')
+            OR u.real_name LIKE CONCAT('%', #{keyword}, '%')
+            OR u.phone LIKE CONCAT('%', #{keyword}, '%')
+            OR d.dept_name LIKE CONCAT('%', #{keyword}, '%')
+            OR p.position_name LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY u.create_time DESC
+    </select>
+
+    <!-- 批量插入用户角色关系 -->
+    <insert id="batchInsertUserRole">
+        INSERT INTO sys_user_role (user_id, role_id) VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
+
+    <!-- 删除用户角色关系 -->
+    <delete id="deleteUserRole">
+        DELETE FROM sys_user_role WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

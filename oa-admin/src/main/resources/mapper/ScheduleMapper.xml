@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.system.mapper.ScheduleMapper">
+
+    <select id="selectScheduleList" resultType="com.oa.system.entity.Schedule">
+        SELECT * FROM oa_schedule WHERE del_flag = 0
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="startDate != null">
+            AND DATE(start_time) >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND DATE(end_time) &lt;= #{endDate}
+        </if>
+        ORDER BY start_time
+    </select>
+
+    <select id="selectScheduleByDate" resultType="com.oa.system.entity.Schedule">
+        SELECT * FROM oa_schedule
+        WHERE user_id = #{userId}
+        AND del_flag = 0
+        AND DATE(start_time) = #{date}
+        ORDER BY start_time
+    </select>
+
+</mapper>
