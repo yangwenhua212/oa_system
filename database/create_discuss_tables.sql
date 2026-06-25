@@ -86,12 +86,20 @@ CREATE TABLE IF NOT EXISTS `oa_address_share` (
 
 -- =========================================
 -- 用户表补充字段（地址、学历、银行账号等）
+-- 注意：init.sql 已包含以下字段定义，此处仅作为增量补丁兼容旧库
 -- =========================================
-ALTER TABLE `sys_user`
-    ADD COLUMN `address` VARCHAR(255) DEFAULT NULL COMMENT '地址' AFTER `remark`,
-    ADD COLUMN `school` VARCHAR(100) DEFAULT NULL COMMENT '毕业院校' AFTER `address`,
-    ADD COLUMN `bank_account` VARCHAR(50) DEFAULT NULL COMMENT '银行账号' AFTER `school`,
-    ADD COLUMN `education` VARCHAR(50) DEFAULT NULL COMMENT '学历' AFTER `bank_account`,
-    ADD COLUMN `id_card` VARCHAR(20) DEFAULT NULL COMMENT '身份证号' AFTER `education`,
-    ADD COLUMN `salary` DECIMAL(10,2) DEFAULT NULL COMMENT '工资' AFTER `id_card`,
-    ADD COLUMN `skin` VARCHAR(20) DEFAULT 'blue' COMMENT '皮肤' AFTER `salary`;
+SET @schema = DATABASE();
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = @schema AND TABLE_NAME = 'sys_user' AND COLUMN_NAME = 'address');
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE `sys_user`
+     ADD COLUMN `address` VARCHAR(255) DEFAULT NULL COMMENT ''地址'' AFTER `remark`,
+     ADD COLUMN `school` VARCHAR(100) DEFAULT NULL COMMENT ''毕业院校'' AFTER `address`,
+     ADD COLUMN `bank_account` VARCHAR(50) DEFAULT NULL COMMENT ''银行账号'' AFTER `school`,
+     ADD COLUMN `education` VARCHAR(50) DEFAULT NULL COMMENT ''学历'' AFTER `bank_account`,
+     ADD COLUMN `id_card` VARCHAR(20) DEFAULT NULL COMMENT ''身份证号'' AFTER `education`,
+     ADD COLUMN `salary` DECIMAL(10,2) DEFAULT NULL COMMENT ''工资'' AFTER `id_card`,
+     ADD COLUMN `skin` VARCHAR(20) DEFAULT ''blue'' COMMENT ''皮肤'' AFTER `salary`',
+    'SELECT 1 AS status');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

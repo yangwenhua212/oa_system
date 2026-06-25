@@ -17,10 +17,13 @@ import com.oa.system.mapper.RoleMapper;
 import com.oa.system.mapper.UserMapper;
 import com.oa.system.service.UserService;
 import com.oa.system.security.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -56,8 +59,9 @@ public class UserServiceImpl implements UserService {
 
         // 更新登录信息
         LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
+        String loginIp = getClientIp();
         updateWrapper.eq(User::getId, user.getId())
-                .set(User::getLastLoginIp, "127.0.0.1")
+                .set(User::getLastLoginIp, loginIp)
                 .set(User::getLastLoginTime, LocalDateTime.now())
                 .setSql("login_count = login_count + 1");
         userMapper.update(null, updateWrapper);
@@ -337,5 +341,34 @@ public class UserServiceImpl implements UserService {
         List<User> users = userMapper.selectList(wrapper);
         users.forEach(u -> u.setPassword(null));
         return users;
+    }
+
+    /**
+     * 从当前请求中获取客户端真实IP
+     */
+    private String getClientIp() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return "127.0.0.1";
+        }
+        HttpServletRequest request = attributes.getRequest();
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        // 多个代理的情况，取第一个IP
+        if (ip != null && ip.contains(",")) {
+            ip = ip.split(",")[0].trim();
+        }
+        return ip;
     }
 }

@@ -202,6 +202,7 @@ import { getMyProcessList } from '@/api/process'
 import { getPlans } from '@/api/plan'
 import { getFileStats } from '@/api/file'
 import { getWeeklyUsage } from '@/api/dashboard'
+import { getDashboardData } from '@/api/dashboard'
 import { clockIn } from '@/api/attendance/checkin'
 import { getPosts } from '@/api/chat'
 
@@ -245,9 +246,23 @@ const stats = ref({ totalFiles: 0, addressCount: 0, chatCount: 0 })
 
 async function loadStats() {
   try {
-    const res = await getFileStats().catch(() => ({ data: {} }))
-    stats.value = { totalFiles: res.data?.totalFiles || 0, addressCount: 0, chatCount: 0 }
+    const [fileRes, dashboardRes] = await Promise.all([
+      getFileStats().catch(() => ({ data: {} })),
+      getDashboardData().catch(() => ({ data: {} }))
+    ])
+    const dashData = dashboardRes.data || {}
+    stats.value = {
+      totalFiles: fileRes.data?.totalFiles || 0,
+      addressCount: dashData.addressCount || 0,
+      chatCount: dashData.chatCount || 0
+    }
   } catch (e) { /* ignore */ }
+}
+
+// ====== resize 处理器 ======
+function handleResize() {
+  lineChart?.resize()
+  barChart?.resize()
 }
 
 // ====== 图表 ======
@@ -298,7 +313,7 @@ function initBarChart(data) {
   })
 }
 
-// ====== 公告通知 ======
+// ====== 加载公告通知 ======
 const notices = ref([])
 async function loadNotices() {
   try {
@@ -374,7 +389,7 @@ onMounted(() => {
   nextTick(() => {
     initLineChart([], [])
     initBarChart([])
-    window.addEventListener('resize', () => { lineChart?.resize(); barChart?.resize() })
+    window.addEventListener('resize', handleResize)
   })
   // 并行加载所有真实数据
   Promise.all([loadLineChartData(), loadCompletionRank(), loadStats(), loadNotices(), loadProcesses(), loadPlans(), loadMyPosts()])
@@ -382,6 +397,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(timer)
+  window.removeEventListener('resize', handleResize)
   lineChart?.dispose()
   barChart?.dispose()
 })

@@ -59,4 +59,14 @@ public interface FileService {
      * 根据ID查询文件
      */
     File getFileById(Long id);
+
+    /**
+     * 更新文件
+     */
+    void updateFileById(File file);
+
+    /**
+     * 更新文件路径
+     */
+    void updateFilePathById(FilePath filePath);
 }

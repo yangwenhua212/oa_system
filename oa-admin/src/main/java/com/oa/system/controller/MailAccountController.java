@@ -21,12 +21,18 @@ public class MailAccountController {
     @GetMapping("/list")
     public R list(PageDTO<MailAccount> pageDTO) {
         PageR<MailAccount> result = mailAccountService.getAccountPage(pageDTO);
+        // 隐藏授权码
+        for (MailAccount account : result.getRecords()) {
+            account.setAuthCode("******");
+        }
         return R.ok(result);
     }
 
     @GetMapping("/{id}")
     public R getById(@PathVariable Long id) {
         MailAccount account = mailAccountService.getAccountById(id);
+        // 隐藏授权码
+        account.setAuthCode("******");
         return R.ok(account);
     }
 

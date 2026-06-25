@@ -10,10 +10,10 @@
     <div class="address-book-dialog">
       <!-- 操作按钮 -->
       <div class="dialog-actions">
-        <el-button type="success" size="small" class="btn-green" :disabled="!selectedUser" @click="handleConfirm">
+        <el-button type="success" size="small" class="btn-green" :disabled="!selectedUser" @click="handleConfirm('replace')">
           <el-icon><Plus /></el-icon> 新增接收人
         </el-button>
-        <el-button type="success" size="small" class="btn-green" :disabled="!selectedUser" @click="handleConfirm">
+        <el-button type="warning" size="small" :disabled="!selectedUser" @click="handleConfirm('append')">
           <el-icon><Plus /></el-icon> 追加接收人
         </el-button>
         <el-button size="small" @click="visible = false">取消</el-button>
@@ -153,28 +153,36 @@ function handleCurrentChange(row) {
   selectedUser.value = row
 }
 
-// 双击行确认
-function handleRowDblClick(row) {
-  confirmSelect(row)
-}
-
 // 确认选择
-function handleConfirm() {
+function handleConfirm(mode) {
   if (!selectedUser.value) {
     ElMessage.warning('请选择一个联系人')
     return
   }
-  confirmSelect(selectedUser.value)
-}
-
-function confirmSelect(user) {
+  const user = selectedUser.value
   emit('select', {
     userId: user.userId,
     realName: user.realName,
     username: user.username,
     phone: user.phone,
     deptName: user.deptName,
-    positionName: user.positionName
+    positionName: user.positionName,
+    mode: mode
+  })
+  ElMessage.success(`已选择: ${user.realName}`)
+  visible.value = false
+}
+
+function handleRowDblClick(row) {
+  const user = row
+  emit('select', {
+    userId: user.userId,
+    realName: user.realName,
+    username: user.username,
+    phone: user.phone,
+    deptName: user.deptName,
+    positionName: user.positionName,
+    mode: 'replace'
   })
   ElMessage.success(`已选择: ${user.realName}`)
   visible.value = false

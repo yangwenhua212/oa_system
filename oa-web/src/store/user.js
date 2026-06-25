@@ -1,11 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+function safeJsonParse(str, defaultVal) {
+  try {
+    return JSON.parse(str || JSON.stringify(defaultVal))
+  } catch {
+    return defaultVal
+  }
+}
+
 const SESSION_DURATION = 12 * 60 * 60 * 1000 // 12小时
 
 export const useUserStore = defineStore('user', () => {
   const token = ref(localStorage.getItem('token') || '')
-  const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || '{}'))
+  const userInfo = ref(safeJsonParse(localStorage.getItem('userInfo'), {}))
   const loginTime = ref(Number(localStorage.getItem('loginTime') || 0))
 
   const isLoggedIn = computed(() => !!token.value)

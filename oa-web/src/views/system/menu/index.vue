@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <span>菜单管理</span>
-          <el-button type="primary" class="btn-primary-green">
+          <el-button type="primary" class="btn-primary-green" @click="handleAdd">
             <el-icon><Plus /></el-icon>
             添加菜单
           </el-button>
@@ -44,9 +44,9 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="180">
-          <template #default>
-            <el-button type="primary" link>编辑</el-button>
-            <el-button type="danger" link>删除</el-button>
+          <template #default="{ row }">
+            <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
+            <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const loading = ref(false)
 const tableData = ref([
@@ -75,6 +76,22 @@ const tableData = ref([
     ]
   }
 ])
+
+function handleAdd() {
+  ElMessage.info('添加菜单功能待实现')
+}
+
+function handleEdit(row) {
+  ElMessage.info(`编辑菜单: ${row.menuName}`)
+}
+
+function handleDelete(row) {
+  ElMessageBox.confirm(`确定要删除菜单"${row.menuName}"吗？`, '提示', { type: 'warning' })
+    .then(() => {
+      ElMessage.success(`已删除: ${row.menuName}`)
+    })
+    .catch(() => {})
+}
 
 onMounted(() => {
   // Load menu data

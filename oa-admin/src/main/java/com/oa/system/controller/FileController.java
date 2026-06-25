@@ -269,8 +269,7 @@ public class FileController {
                 return R.error("无权操作此文件夹");
             }
             path.setPathName(newName);
-            // 更新数据库
-            // filePathMapper.updateById(path);
+            fileService.updateFilePathById(path);
         } else {
             File file = fileService.getFileById(id);
             if (file == null) {
@@ -280,8 +279,7 @@ public class FileController {
                 return R.error("无权操作此文件");
             }
             file.setFileName(newName);
-            // 更新数据库
-            // fileMapper.updateById(file);
+            fileService.updateFileById(file);
         }
         
         return R.ok();
@@ -356,7 +354,7 @@ public class FileController {
         }
         
         file.setPathId(targetPathId);
-        // fileMapper.updateById(file);
+        fileService.updateFileById(file);
         
         return R.ok();
     }

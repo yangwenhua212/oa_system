@@ -183,7 +183,9 @@ CREATE TABLE `sys_log` (
     `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `idx_user_id` (`user_id`),
-    KEY `idx_create_time` (`create_time`)
+    KEY `idx_create_time` (`create_time`),
+    KEY `idx_operation` (`operation`),
+    KEY `idx_url` (`url`(255))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操作日志表';
 
 -- 字典类型表
@@ -274,7 +276,9 @@ CREATE TABLE `oa_leave` (
     PRIMARY KEY (`id`),
     KEY `idx_user_id` (`user_id`),
     KEY `idx_status` (`status`),
-    KEY `idx_create_time` (`create_time`)
+    KEY `idx_create_time` (`create_time`),
+    KEY `idx_start_time` (`start_time`),
+    KEY `idx_end_time` (`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='请假表';
 
 -- 加班表
@@ -299,7 +303,9 @@ CREATE TABLE `oa_overtime` (
     `update_by` BIGINT DEFAULT NULL COMMENT '更新者',
     PRIMARY KEY (`id`),
     KEY `idx_user_id` (`user_id`),
-    KEY `idx_status` (`status`)
+    KEY `idx_status` (`status`),
+    KEY `idx_start_time` (`start_time`),
+    KEY `idx_end_time` (`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='加班表';
 
 -- =========================================
@@ -381,7 +387,9 @@ CREATE TABLE `oa_approval_record` (
     `update_by` BIGINT DEFAULT NULL COMMENT '更新者',
     PRIMARY KEY (`id`),
     KEY `idx_instance_id` (`process_instance_id`),
-    KEY `idx_approver_id` (`approver_id`)
+    KEY `idx_approver_id` (`approver_id`),
+    KEY `idx_start_time` (`start_time`),
+    KEY `idx_end_time` (`end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审批记录表';
 
 -- =========================================

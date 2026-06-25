@@ -90,7 +90,7 @@ public class UserController {
     @PutMapping("/resetPassword/{id}")
     @RequirePerms("system:user:list")
     public R resetPassword(@PathVariable Long id) {
-        userService.resetPassword(id, "123456");
+        userService.resetPassword(id, "abc123456");
         return R.ok();
     }
 

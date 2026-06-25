@@ -22,4 +22,9 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus, { locale: zhCn })
 
+// 全局错误处理器
+app.config.errorHandler = (err, instance, info) => {
+  console.error('全局错误:', err, info)
+}
+
 app.mount('#app')

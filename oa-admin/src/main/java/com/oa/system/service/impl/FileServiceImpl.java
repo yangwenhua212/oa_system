@@ -106,4 +106,16 @@ public class FileServiceImpl implements FileService {
     public File getFileById(Long id) {
         return fileMapper.selectById(id);
     }
+
+    @Override
+    @Transactional
+    public void updateFileById(File file) {
+        fileMapper.updateById(file);
+    }
+
+    @Override
+    @Transactional
+    public void updateFilePathById(FilePath filePath) {
+        filePathMapper.updateById(filePath);
+    }
 }

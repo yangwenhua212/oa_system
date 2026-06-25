@@ -1,7 +1,7 @@
 # OA System - Backend
 
 ## Technology Stack
-- **Framework**: Spring Boot 4.0.6
+- **Framework**: Spring Boot 3.4.5
 - **Java Version**: JDK 21
 - **ORM**: MyBatis-Plus 3.5.9
 - **Security**: Spring Security + JWT

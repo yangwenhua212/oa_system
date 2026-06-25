@@ -347,8 +347,7 @@ function handleOpen(row) {
     currentPathId.value = row.id
     loadFiles()
   } else if (row.fileId) {
-    const token = localStorage.getItem('token')
-    window.open(`/api/file/download/${row.fileId}?token=${token}`, '_blank')
+    handleDownload(row)
   }
 }
 
@@ -371,11 +370,19 @@ function goBack() {
 async function handleDownload(row) {
   try {
     ElMessage.info(`正在下载: ${row.name}`)
-    // 创建隐藏的a标签下载
+    const token = userStore.token || localStorage.getItem('token')
+    const fileId = row.fileId || row.id
+    const response = await fetch(`/api/file/download/${fileId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error('下载失败')
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = row.filePath || `/api/file/download/${row.id}`
+    link.href = url
     link.download = row.name
     link.click()
+    URL.revokeObjectURL(url)
   } catch (error) {
     console.error('下载失败:', error)
     ElMessage.error('下载失败')
